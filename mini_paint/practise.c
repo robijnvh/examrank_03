@@ -1,18 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   mini_paint.c                                       :+:    :+:            */
+/*   practise.c                                         :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: rvan-hou <rvan-hou@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2020/06/19 11:29:01 by rvan-hou      #+#    #+#                 */
-/*   Updated: 2020/06/19 17:57:35 by rvan-hou      ########   odam.nl         */
+/*   Created: 2020/06/19 14:57:15 by rvan-hou      #+#    #+#                 */
+/*   Updated: 2020/06/19 18:19:12 by rvan-hou      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mini_paint.h"
+#include "practise.h"
 
-/* str met aantal bg chars */
 char	*get_data(FILE *file, t_data *data)
 {
 	int		i;
@@ -22,7 +21,7 @@ char	*get_data(FILE *file, t_data *data)
 		return (NULL);
 	if (data->width <= 0 || data->width > 300 || data->height <= 0 || data->height > 300)
 		return (NULL);
-	tmp = (char*)malloc(sizeof(*tmp) * (data->width * data->height));
+	tmp = (char *)malloc(sizeof(*tmp) * (data->width * data->height));
 	if (!tmp)
 		return (NULL);
 	i = 0;
@@ -36,7 +35,7 @@ char	*get_data(FILE *file, t_data *data)
 
 int		check_circle(float x, float y, t_data *data)
 {
-	float	dist;
+	float dist;
 
 	dist = sqrtf(powf(x - data->x, 2.0) + powf(y - data->y, 2.0));
 	if (dist <= data->radius)
@@ -48,10 +47,10 @@ int		check_circle(float x, float y, t_data *data)
 	return (0);
 }
 
-int		make_shape(t_data *data, char *res)
+void	make_shape(t_data *data, char **res)
 {
-	int	y;
 	int	x;
+	int	y;
 	int	check;
 
 	y = 0;
@@ -61,32 +60,30 @@ int		make_shape(t_data *data, char *res)
 		while (x < data->width)
 		{
 			check = check_circle((float)x, (float)y, data);
-			if ((data->type == 'c' && check == 2)
-				|| (data->type == 'C' && check))
-				res[(y * data->width) + x] = data->color;
+			if ((data->type == 'c' && check == 2) || (data->type == 'C' && check))
+				(*res)[(y * data->width) + x] = data->fill;
 			x++;
 		}
 		y++;
 	}
-	return (0);
 }
 
-int		make_shapes(FILE *file, t_data *data, char *res)
+int		make_shapes(FILE *file, t_data *data, char **res)
 {
-	int		ret;
+	int	check;
 
-	while ((ret = fscanf(file, "%c %f %f %f %c\n", &data->type, &data->x, &data->y, &data->radius, &data->color)) == 5)
+	while ((check = fscanf(file, "%c %f %f %f %c\n", &data->type, &data->x, &data->y, &data->radius, &data->fill)) == 5)
 	{
 		if (data->radius <= 0.00000000 || (data->type != 'c' && data->type != 'C'))
 			return (0);
 		make_shape(data, res);
-	}
-	if (ret != -1)
+	} 
+	if (check != -1)
 		return (0);
 	return (1);
 }
 
-void	draw_shape(t_data *data, char *res)
+void	draw_it(t_data *data, char *res)
 {
 	int	i;
 
@@ -121,23 +118,23 @@ int		main(int argc, char **argv)
 	}
 	if (!(res = get_data(file, &data)))
 	{
+		write(1, "Error: Operation file corrupted\n", 32);
 		if (file)
 			fclose(file);
 		if (res)
 			free(res);
-		write(1, "Error: Operation file corrupted\n", 32);
 		return (1);
 	}
-	if (!(make_shapes(file, &data, res)))
+	if (!(make_shapes(file, &data, &res)))
 	{
+		write(1, "Error: Operation file corrupted\n", 32);
 		if (file)
 			fclose(file);
 		if (res)
 			free(res);
-		write(1, "Error: Operation file corrupted\n", 32);
 		return (1);
 	}
-	draw_shape(&data, res);
+	draw_it(&data, res);
 	if (file)
 		fclose(file);
 	if (res)

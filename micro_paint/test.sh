@@ -15,7 +15,7 @@ do
 	./gen
 	if [ $? ]
 	then
-		sleep .01
+		# sleep .01
 		./_our_micro_paint example_ > coutput 2>&1
 		our_res=$?
 		./micro_paint example_ > output 2>&1
