@@ -6,7 +6,7 @@
 /*   By: rvan-hou <rvan-hou@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/06/19 18:29:45 by rvan-hou      #+#    #+#                 */
-/*   Updated: 2020/06/19 18:32:21 by rvan-hou      ########   odam.nl         */
+/*   Updated: 2020/06/22 11:57:17 by rvan-hou      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 typedef struct	s_data
 {
 	int			width;
-	int			heigth;
+	int			height;
 	char		background;
 	char		type;
 	char		fill;
